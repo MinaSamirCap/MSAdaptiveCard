@@ -39,7 +39,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    
+
+    /// multi library version
     //implementation 'io.adaptivecards:adaptivecards-android:1.1.0'
     implementation 'io.adaptivecards:adaptivecards-android:2.4.0'
 

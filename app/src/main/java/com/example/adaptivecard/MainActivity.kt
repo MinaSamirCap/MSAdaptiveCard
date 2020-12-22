@@ -131,11 +131,12 @@ class MainActivity : AppCompatActivity(), ICardActionHandler {
         val parseResult =
             AdaptiveCard.DeserializeFromString(ex1, AdaptiveCardRenderer.VERSION, contxt)
 
-
-        val renderedCard = AdaptiveCardRenderer.getInstance().render(
-            this,
-            supportFragmentManager, parseResult.GetAdaptiveCard(), this, HostConfig()
-        )
+        val renderedCard = AdaptiveCardRenderer.getInstance()
+            .render(
+                this, supportFragmentManager,
+                parseResult.GetAdaptiveCard(),
+                this, HostConfig()
+            )
 
         findViewById<ConstraintLayout>(R.id.constraintLayout).addView(renderedCard.view)
     }
