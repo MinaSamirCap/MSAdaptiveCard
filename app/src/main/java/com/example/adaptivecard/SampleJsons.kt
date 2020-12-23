@@ -386,3 +386,10 @@ val hostConfJson = """{
 	}
 }"""
 
+val myJson = """{
+    "type" : "MyType",
+    "myTypeData" : "My data",
+    "version": "1.3"
+}"""
+
+const val myType = "MyType"

@@ -3,21 +3,54 @@ package com.example.adaptivecard
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.adaptivecard.custom.MyCardElementParser
+import com.example.adaptivecard.custom.MyCardElementRenderer
 import io.adaptivecards.objectmodel.*
 import io.adaptivecards.renderer.AdaptiveCardRenderer
 import io.adaptivecards.renderer.RenderedAdaptiveCard
 import io.adaptivecards.renderer.actionhandler.ICardActionHandler
+import io.adaptivecards.renderer.registration.CardRendererRegistration
 
 
 class MainActivity : AppCompatActivity(), ICardActionHandler {
 
 
+    lateinit var constraintLayout: ConstraintLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        constraintLayout = findViewById(R.id.constraintLayout)
+        //constraintLayout.addView(renderCard())
+        constraintLayout.addView(customParser())
+    }
+
+    private fun customParser(): View? {
+        val elementParser = ElementParserRegistration().apply {
+            AddParser(myType, MyCardElementParser())
+        }
+        val contxt = ParseContext()
+        contxt.elementParserRegistration = elementParser
+
+        CardRendererRegistration.getInstance().registerRenderer(myType, MyCardElementRenderer())
+
+        val parseResult =
+            AdaptiveCard.DeserializeFromString(myJson, AdaptiveCardRenderer.VERSION, contxt)
+        val renderedCard = AdaptiveCardRenderer.getInstance()
+            .render(
+                this, supportFragmentManager,
+                parseResult.GetAdaptiveCard(),
+                this, HostConfig()
+            )
+        return renderedCard.view
+
+    }
+
+    private fun renderCard(): View? {
         val contxt = ParseContext()
         val parseResult =
             AdaptiveCard.DeserializeFromString(ex1, AdaptiveCardRenderer.VERSION, contxt)
@@ -41,8 +74,7 @@ class MainActivity : AppCompatActivity(), ICardActionHandler {
                 parseResult.GetAdaptiveCard(),
                 this, hostConf
             )
-
-        findViewById<ConstraintLayout>(R.id.constraintLayout).addView(renderedCard.view)
+        return renderedCard.view
     }
 
     override fun onAction(actionElement: BaseActionElement, renderedCard: RenderedAdaptiveCard) {
