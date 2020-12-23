@@ -1,5 +1,7 @@
 package com.example.adaptivecard
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -141,15 +143,33 @@ class MainActivity : AppCompatActivity(), ICardActionHandler {
         findViewById<ConstraintLayout>(R.id.constraintLayout).addView(renderedCard.view)
     }
 
-    override fun onAction(p0: BaseActionElement?, p1: RenderedAdaptiveCard?) {
+    override fun onAction(actionElement: BaseActionElement, renderedCard: RenderedAdaptiveCard) {
+        when (actionElement.GetElementType()) {
+            ActionType.OpenUrl -> onOpenUrl(actionElement)
+        }
+    }
+
+    override fun onMediaPlay(actionElement: BaseCardElement, renderedCard: RenderedAdaptiveCard) {
 
     }
 
-    override fun onMediaPlay(p0: BaseCardElement?, p1: RenderedAdaptiveCard?) {
+    override fun onMediaStop(actionElement: BaseCardElement, renderedCard: RenderedAdaptiveCard) {
 
     }
 
-    override fun onMediaStop(p0: BaseCardElement?, p1: RenderedAdaptiveCard?) {
 
+    private fun onOpenUrl(actionElement: BaseActionElement) {
+        var openUrlAction: OpenUrlAction? = null
+        if (actionElement is ShowCardAction) {
+            openUrlAction = actionElement as OpenUrlAction
+        } else if (OpenUrlAction.dynamic_cast(actionElement).also { openUrlAction = it } == null) {
+            throw InternalError("Unable to convert BaseActionElement to ShowCardAction object model.")
+        }
+        openUrl(openUrlAction!!.GetUrl())
+    }
+
+    fun openUrl(url: String) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(browserIntent)
     }
 }
